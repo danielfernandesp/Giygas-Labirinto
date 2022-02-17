@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include "src/headers/backtracking.h"
-#include "src/headers/menu.h"
-#include "src/headers/dados.h"
-#include "src/headers/gerador.h"
+#include "headers/backtracking.h"
+#include "headers/menu.h"
+#include "headers/dados.h"
+#include "headers/gerador.h"
 
 #define MODOANALISE 1  //SETAR 1 PARA ATIVAR, 0 PARA DESATIVAR
 
