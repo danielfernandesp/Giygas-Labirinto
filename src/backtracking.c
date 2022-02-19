@@ -6,14 +6,14 @@
 #include <time.h>
 
 /*Nessa função criamos uma matriz dinamicamente alocada e adicionamos a quantidade que teram no labirnto*/
-int ** IniciarLabirinto(int linha, int coluna, TipoItem *itens,int quantChave){
+int ** IniciarLabirinto(int linha, int coluna, TipoHess *hess,int quantChave){
     int **labirintof;
 
     labirintof = (int**)calloc((linha+1),sizeof(int*));
     for(int i = 0; i <= linha; i++){
         labirintof[i] = (int*)calloc((coluna+1),sizeof(int));
     }
-    itens->quantChave = quantChave;
+    hess->quantChave = quantChave;
 
     return labirintof;
 }
@@ -25,7 +25,7 @@ void InserirPosicao(int ** labirinto, int linha, int coluna, int valor){
         labirinto[linha][coluna] = 1;
     }else if(valor == 2){ //posição com parede
         labirinto[linha][coluna] = 2;
-    }else{ // posição acessivel com chave
+    }else{ // posição com MOB
         labirinto[linha][coluna] = 3;
     }
 }
@@ -81,11 +81,11 @@ int EhParede(int ** labirinto, int linha, int coluna){
   return 0;
 }
 /*Função para abrir portas*/
-void AbrirPorta(int ** labirinto, int linha, int coluna){
+void MonstroEliminado(int ** labirinto, int linha, int coluna){
   labirinto[linha][coluna] = 1;
 }
 /*Função para conferir se determinada posição é uma porta fechada*/
-int EhPortaFechada(int **labirinto, int linha, int coluna){
+int EhPosicaoBatalha(int **labirinto, int linha, int coluna){
   if(labirinto[linha][coluna] == 3){
       return 1;
   }
@@ -115,7 +115,7 @@ int ColunaEstudante(int ** labirinto, int linha, int coluna){
 }
 
 /*Função principal do programa, onde conferimos sempre se o estudante já chegou no final do labirinto e utilizamos o backtracking*/
-int Movimenta_Estudante(int ** labirinto, TipoItem *itens, int i, int j, int linha, int coluna, TipoDados * dados){
+int Movimenta_Estudante(int ** labirinto, TipoHess *itens, int i, int j, int linha, int coluna, TipoDados * dados){
     if(ChegouNoFim(labirinto, i, j)){ /*O estudante chegou no final do labirinto*/
         DadosFinais(dados, j);
         MarcarPosicao(labirinto, i, j);
@@ -126,20 +126,23 @@ int Movimenta_Estudante(int ** labirinto, TipoItem *itens, int i, int j, int lin
         dados->consegueSair = 0;
         return 0;
     }
-    if(!EhParede(labirinto, i, j) && !EhPortaFechada(labirinto, i, j)){ //posição valida
+    if(!EhParede(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){ //posição valida
         dados->quantMovimentacao++;
         printf("Linha: %d Coluna: %d\n", i, j);
     }
-    if(EhPortaFechada(labirinto, i, j) && itens->quantChave > 0){ //chegou em uma posição que tem uma porta fechada, então abri a porta e perde uma chave
+    if(EhPosicaoBatalha(labirinto, i, j) ){ //TODO: Criar verificacao de Batalha
+      //TODO: Verificar qual monstro e (Criar funcao para isso)
+      //TODO: verificar se o poder do monstro eh menor que o do heroi
+      //TODO: caso nao seja, verificar se o heroi tem algum especial restante
       dados->quantMovimentacao++;
-      printf("Linha: %d Coluna: %d\n", i, j);
-      itens->quantChave--;
-      AbrirPorta(labirinto, i, j);
+      printf("Monstro na Linha: %d Coluna: %d\n", i, j);
+      //TODO: Caso o heroi tenha usado especial, deve ser subtraido dos especiais restantes
+      MonstroEliminado(labirinto, i, j);
     }
     /*Caso o estudante esteja em uma posição valida, ou seja, não esteja na parede, em um local que já foi
     e não seja uma porta fechada, o estudante marca essa posição e testa os movimentos para cima, para direita,
     para esquerda e para baixo. */
-    if(!EhParede(labirinto, i, j) && !EstudantePassou(labirinto, i, j) && !EhPortaFechada(labirinto, i, j)){
+    if(!EhParede(labirinto, i, j) && !EstudantePassou(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){
         MarcarPosicao(labirinto, i, j);
         if(Movimenta_Estudante(labirinto, itens,i - 1, j, linha, coluna,dados)); // para cima
         else{
@@ -161,7 +164,7 @@ int Movimenta_Estudante(int ** labirinto, TipoItem *itens, int i, int j, int lin
 }
 
 /*Mesma função, porém com o modo analise*/
-int Movimenta_Estudante_Analise(int ** labirinto, TipoItem *itens, int i, int j, int linha, int coluna, TipoDados * dados,long long int* NUM){
+int Movimenta_Estudante_Analise(int ** labirinto, TipoHess *itens, int i, int j, int linha, int coluna, TipoDados * dados,long long int* NUM){
     *NUM = *NUM + 1;
     if(ChegouNoFim(labirinto, i, j)){  /*O estudante chegou no final do labirinto*/
         DadosFinais(dados, j);
@@ -173,20 +176,20 @@ int Movimenta_Estudante_Analise(int ** labirinto, TipoItem *itens, int i, int j,
         dados->consegueSair = 0;
         return 0;
     }
-    if(!EhParede(labirinto, i, j) && !EhPortaFechada(labirinto, i, j)){ //posição valida
+    if(!EhParede(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){ //posição valida
         dados->quantMovimentacao++;
         printf("Linha: %d Coluna: %d\n", i, j);
     }
-    if(EhPortaFechada(labirinto, i, j) && itens->quantChave > 0){ //chegou em uma posição que tem uma porta fechada, então abri a porta e perde uma chave
+    if(EhPosicaoBatalha(labirinto, i, j) && itens->quantChave > 0){ //chegou em uma posição que tem uma porta fechada, então abri a porta e perde uma chave
       dados->quantMovimentacao++;
       printf("Linha: %d Coluna: %d\n", i, j);
       itens->quantChave--;
-      AbrirPorta(labirinto, i, j);
+      MonstroEliminado(labirinto, i, j);
     }
     /*Caso o estudante esteja em uma posição valida, ou seja, não esteja na parede, em um local que já foi
     e não seja uma porta fechada, o estudante marca essa posição e testa os movimentos para cima, para direita,
     para esquerda e para baixo. */
-    if(!EhParede(labirinto, i, j) && !EstudantePassou(labirinto, i, j) && !EhPortaFechada(labirinto, i, j)){
+    if(!EhParede(labirinto, i, j) && !EstudantePassou(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){
         MarcarPosicao(labirinto, i, j);
         if(Movimenta_Estudante_Analise(labirinto, itens,i - 1, j, linha, coluna,dados,NUM)); // para cima
         else{

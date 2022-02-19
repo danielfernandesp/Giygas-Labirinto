@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]) {
   strcpy(arquivo, "\0"); //colocamos vazio em arquivo para impedir que o usuario acesse a opcao 2 antes de digitar o nome do arquivo
   FILE *arq;
   Labirinto labirinto;
-  TipoItem itens;
+  TipoHess itens;
   TipoDados dados;
   long long int numRecurcoes;
   while(1){
