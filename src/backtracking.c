@@ -6,7 +6,7 @@
 #include <time.h>
 
 /*Nessa função criamos uma matriz dinamicamente alocada e adicionamos a quantidade que teram no labirnto*/
-int ** IniciarLabirinto(int linha, int coluna, TipoHess *hess,int quantChave){
+int ** IniciarLabirinto(int linha, int coluna, TipoNess *hess,int quantChave){
     int **labirintof;
 
     labirintof = (int**)calloc((linha+1),sizeof(int*));
@@ -25,8 +25,16 @@ void InserirPosicao(int ** labirinto, int linha, int coluna, int valor){
         labirinto[linha][coluna] = 1;
     }else if(valor == 2){ //posição com parede
         labirinto[linha][coluna] = 2;
-    }else{ // posição com MOB
+    }else if(valor == 3){ // posição com LiL UFO
         labirinto[linha][coluna] = 3;
+    }else if(valor == 4){ // posição com Territorial Oak
+        labirinto[linha][coluna] = 4;
+    }else if(valor == 5){ // posição com Starman Junior
+        labirinto[linha][coluna] = 5;
+    }else if(valor == 6){ // posição com Master Belch
+        labirinto[linha][coluna] = 6;
+    }else{
+        labirinto[linha][coluna] = 7; //posiçao com Giygas
     }
 }
 /*Função para exibir o labirinto percorrido pelo estudante*/
@@ -61,7 +69,7 @@ int EstudanteEsta(int ** labirinto, int linha, int coluna){
   return 0;
 }
 /*Função para encontrar se tá no final do labirinto*/
-int ChegouNoFim(int **labirinto, int i, int j){
+int ChegouNoFim(int **labirinto, int i, int j){ //TODO: passar uma flag se o Giygas esta morto
   if(i <= 0 && !EhParede(labirinto, i, j)){
     return 1;
   }
@@ -85,12 +93,23 @@ void MonstroEliminado(int ** labirinto, int linha, int coluna){
   labirinto[linha][coluna] = 1;
 }
 /*Função para conferir se determinada posição é uma porta fechada*/
-int EhPosicaoBatalha(int **labirinto, int linha, int coluna){
-  if(labirinto[linha][coluna] == 3){
-      return 1;
+int EhPosicaoBatalha(int **labirinto, int linha, int coluna, TipoMonstroDatabase *monstroDatabase) {
+  if(labirinto[linha][coluna] >= 3 && labirinto[linha][coluna]<= 7){
+      if(labirinto[linha][coluna] == 3){
+        return monstroDatabase->poderU;
+      }else if(labirinto[linha][coluna] == 4){
+        return monstroDatabase->poderT;
+      }else if(labirinto[linha][coluna] == 5){
+        return monstroDatabase->poderS;
+      }else if(labirinto[linha][coluna] == 6){
+        return monstroDatabase->poderB;
+      }else {
+        return monstroDatabase->poderG;
+      }
   }
-  return 0;
+  return 0; // Nao tem monstro
 }
+
 /*Função para encontrar a posição da linha onde o estudante está*/
 int LinhaEstudante(int ** labirinto, int linha, int coluna){
   for(int i = 0; i < linha; i ++){
@@ -115,42 +134,49 @@ int ColunaEstudante(int ** labirinto, int linha, int coluna){
 }
 
 /*Função principal do programa, onde conferimos sempre se o estudante já chegou no final do labirinto e utilizamos o backtracking*/
-int Movimenta_Estudante(int ** labirinto, TipoHess *itens, int i, int j, int linha, int coluna, TipoDados * dados){
-    if(ChegouNoFim(labirinto, i, j)){ /*O estudante chegou no final do labirinto*/
-        DadosFinais(dados, j);
-        MarcarPosicao(labirinto, i, j);
-        printf("Linha: %d Coluna: %d\n", i, j);
+int Movimenta_Estudante(int **labirinto, TipoNess *ness, int x, int y,int linha, int coluna, TipoDados *dados,TipoMonstroDatabase *monstrodatabase) {
+    if(ChegouNoFim(labirinto, x,y)){ /*O estudante chegou no final do labirinto*/
+        DadosFinais(dados, y);
+        MarcarPosicao(labirinto, x, y);
+        printf("Linha: %d Coluna: %d\n", x, y);
         return 1;
     }
-    if(UltrapassouLimites(i, j, linha, coluna)){ //Posição fora do espaço do labirinto
+    if(UltrapassouLimites(x, y, linha, coluna)){ //Posição fora do espaço do labirinto
         dados->consegueSair = 0;
         return 0;
     }
-    if(!EhParede(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){ //posição valida
+    if(!EhParede(labirinto, x, y) && !EhPosicaoBatalha(labirinto, x, y, NULL)){ //posição valida
         dados->quantMovimentacao++;
-        printf("Linha: %d Coluna: %d\n", i, j);
+        printf("Linha: %d Coluna: %d\n", x, y);
     }
-    if(EhPosicaoBatalha(labirinto, i, j) ){ //TODO: Criar verificacao de Batalha
-      //TODO: Verificar qual monstro e (Criar funcao para isso)
-      //TODO: verificar se o poder do monstro eh menor que o do heroi
-      //TODO: caso nao seja, verificar se o heroi tem algum especial restante
+    if(EhPosicaoBatalha(labirinto, x, y,monstrodatabase) != 0){
+      if(ness->poder >= EhPosicaoBatalha(labirinto, x, y,monstrodatabase)){
+      //TODO: se o monstro for o Giygas, alterar a flag giygasTaMorto
+      }else if(EhPosicaoBatalha(labirinto, x, y,monstrodatabase) != monstrodatabase->poderG && ness->EspeciaisRestantes > 0){
+        MonstroEliminado(labirinto, x, y);
+        ness->EspeciaisRestantes--;
+      }
       dados->quantMovimentacao++;
-      printf("Monstro na Linha: %d Coluna: %d\n", i, j);
-      //TODO: Caso o heroi tenha usado especial, deve ser subtraido dos especiais restantes
-      MonstroEliminado(labirinto, i, j);
+      printf("Monstro na Linha: %d Coluna: %d\n", x, y);
+
+
     }
     /*Caso o estudante esteja em uma posição valida, ou seja, não esteja na parede, em um local que já foi
     e não seja uma porta fechada, o estudante marca essa posição e testa os movimentos para cima, para direita,
     para esquerda e para baixo. */
-    if(!EhParede(labirinto, i, j) && !EstudantePassou(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){
-        MarcarPosicao(labirinto, i, j);
-        if(Movimenta_Estudante(labirinto, itens,i - 1, j, linha, coluna,dados)); // para cima
+    if(!EhParede(labirinto, x, y) && !EstudantePassou(labirinto, x, y) && !EhPosicaoBatalha(labirinto, x, y, NULL)){
+        MarcarPosicao(labirinto, x, y);
+        if(Movimenta_Estudante(labirinto, ness, x - 1, y, linha, coluna,
+                                dados, NULL)); // para cima
         else{
-            if(Movimenta_Estudante(labirinto, itens, i, j + 1, linha, coluna,dados)); // para a direita
+            if(Movimenta_Estudante(labirinto, ness, x, y + 1, linha, coluna,
+                                  dados, NULL)); // para a direita
             else{
-                if(Movimenta_Estudante(labirinto, itens, i, j - 1, linha, coluna,dados)); // para a esquerda
+                if(Movimenta_Estudante(labirinto, ness, x, y - 1, linha, coluna,
+                                      dados, NULL)); // para a esquerda
                 else{
-                    if(Movimenta_Estudante(labirinto, itens, i + 1, j, linha, coluna,dados)); //para baixo
+                    if(Movimenta_Estudante(labirinto, ness, x + 1, y, linha,
+                                          coluna, dados, NULL)); //para baixo
                     else{
                         return 0;
                     }
@@ -164,7 +190,7 @@ int Movimenta_Estudante(int ** labirinto, TipoHess *itens, int i, int j, int lin
 }
 
 /*Mesma função, porém com o modo analise*/
-int Movimenta_Estudante_Analise(int ** labirinto, TipoHess *itens, int i, int j, int linha, int coluna, TipoDados * dados,long long int* NUM){
+int Movimenta_Estudante_Analise(int ** labirinto, TipoNess *itens, int i, int j, int linha, int coluna, TipoDados * dados,long long int* NUM){
     *NUM = *NUM + 1;
     if(ChegouNoFim(labirinto, i, j)){  /*O estudante chegou no final do labirinto*/
         DadosFinais(dados, j);
@@ -176,11 +202,11 @@ int Movimenta_Estudante_Analise(int ** labirinto, TipoHess *itens, int i, int j,
         dados->consegueSair = 0;
         return 0;
     }
-    if(!EhParede(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){ //posição valida
+    if(!EhParede(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j, NULL)){ //posição valida
         dados->quantMovimentacao++;
         printf("Linha: %d Coluna: %d\n", i, j);
     }
-    if(EhPosicaoBatalha(labirinto, i, j) && itens->quantChave > 0){ //chegou em uma posição que tem uma porta fechada, então abri a porta e perde uma chave
+    if(EhPosicaoBatalha(labirinto, i, j, NULL) && itens->quantChave > 0){ //chegou em uma posição que tem uma porta fechada, então abri a porta e perde uma chave
       dados->quantMovimentacao++;
       printf("Linha: %d Coluna: %d\n", i, j);
       itens->quantChave--;
@@ -189,7 +215,7 @@ int Movimenta_Estudante_Analise(int ** labirinto, TipoHess *itens, int i, int j,
     /*Caso o estudante esteja em uma posição valida, ou seja, não esteja na parede, em um local que já foi
     e não seja uma porta fechada, o estudante marca essa posição e testa os movimentos para cima, para direita,
     para esquerda e para baixo. */
-    if(!EhParede(labirinto, i, j) && !EstudantePassou(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j)){
+    if(!EhParede(labirinto, i, j) && !EstudantePassou(labirinto, i, j) && !EhPosicaoBatalha(labirinto, i, j, NULL)){
         MarcarPosicao(labirinto, i, j);
         if(Movimenta_Estudante_Analise(labirinto, itens,i - 1, j, linha, coluna,dados,NUM)); // para cima
         else{

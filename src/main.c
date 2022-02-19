@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]) {
   strcpy(arquivo, "\0"); //colocamos vazio em arquivo para impedir que o usuario acesse a opcao 2 antes de digitar o nome do arquivo
   FILE *arq;
   Labirinto labirinto;
-  TipoHess itens;
+  TipoNess itens;
   TipoDados dados;
   long long int numRecurcoes;
   while(1){
@@ -88,7 +88,9 @@ int main(int argc, char const *argv[]) {
             Movimenta_Estudante_Analise(labirinto, &itens, linhaEstudante, colunaEstudante, linhaArq, colunaArq, &dados,&numRecurcoes);
             printf("\n\tMODO ANALISE!\n-->O numero total de chamadas recursivas foi de: %lld\n\n",numRecurcoes);
           }else{
-            Movimenta_Estudante(labirinto, &itens, linhaEstudante, colunaEstudante, linhaArq, colunaArq, &dados);
+            Movimenta_Estudante(labirinto, &itens, linhaEstudante,
+                                colunaEstudante, linhaArq, colunaArq, &dados,
+                                NULL); //TDOO: Consertar codigo fora de alcance
           }
           ImprimirLabirinto(labirinto, linhaArq, colunaArq);
           ImprimirDados(dados);
