@@ -6,14 +6,15 @@
 #include <time.h>
 
 /*Nessa função criamos uma matriz dinamicamente alocada e adicionamos a quantidade que teram no labirnto*/
-int ** IniciarLabirinto(int linha, int coluna, TipoNess *hess,int quantChave){
+int **IniciarLabirinto(int linha, int coluna, TipoNess *hess, int poder, int especiaisRestantes) {
     int **labirintof;
 
     labirintof = (int**)calloc((linha+1),sizeof(int*));
     for(int i = 0; i <= linha; i++){
         labirintof[i] = (int*)calloc((coluna+1),sizeof(int));
     }
-    hess->quantChave = quantChave;
+    hess->poder = poder;
+    hess->EspeciaisRestantes = especiaisRestantes;
 
     return labirintof;
 }
@@ -93,21 +94,27 @@ void MonstroEliminado(int ** labirinto, int linha, int coluna){
   labirinto[linha][coluna] = 1;
 }
 /*Função para conferir se determinada posição é uma porta fechada*/
-int EhPosicaoBatalha(int **labirinto, int linha, int coluna, TipoMonstroDatabase *monstroDatabase) {
+short EhPosicaoBatalha(int **labirinto, int linha, int coluna, TipoMonstroDatabase *monstroDatabase) {
   if(labirinto[linha][coluna] >= 3 && labirinto[linha][coluna]<= 7){
-      if(labirinto[linha][coluna] == 3){
-        return monstroDatabase->poderU;
-      }else if(labirinto[linha][coluna] == 4){
-        return monstroDatabase->poderT;
-      }else if(labirinto[linha][coluna] == 5){
-        return monstroDatabase->poderS;
-      }else if(labirinto[linha][coluna] == 6){
-        return monstroDatabase->poderB;
-      }else {
-        return monstroDatabase->poderG;
-      }
+    return 1;
   }
   return 0; // Nao tem monstro
+}
+
+TipoMob IdentificaAmeaca(int **labirinto, int linha, int coluna, TipoMonstroDatabase *monstroDatabase){
+  if(labirinto[linha][coluna] >= 3 && labirinto[linha][coluna]<= 7){
+    if(labirinto[linha][coluna] == 3){
+      return monstroDatabase->LilUfO;
+    }else if(labirinto[linha][coluna] == 4){
+      return monstroDatabase->TerritorialOak;
+    }else if(labirinto[linha][coluna] == 5){
+      return monstroDatabase->StarmanJr;
+    }else if(labirinto[linha][coluna] == 6){
+      return monstroDatabase->MasterBelch;
+    }else {
+      return monstroDatabase->Giygas;
+    }
+  }
 }
 
 /*Função para encontrar a posição da linha onde o estudante está*/
@@ -145,19 +152,21 @@ int Movimenta_Estudante(int **labirinto, TipoNess *ness, int x, int y,int linha,
         dados->consegueSair = 0;
         return 0;
     }
-    if(!EhParede(labirinto, x, y) && !EhPosicaoBatalha(labirinto, x, y, NULL)){ //posição valida
+    if(!EhParede(labirinto, x, y) && !EhPosicaoBatalha(labirinto, x, y, monstrodatabase)){ //posição valida
         dados->quantMovimentacao++;
         printf("Linha: %d Coluna: %d\n", x, y);
     }
     if(EhPosicaoBatalha(labirinto, x, y,monstrodatabase) != 0){
-      if(ness->poder >= EhPosicaoBatalha(labirinto, x, y,monstrodatabase)){
-      //TODO: se o monstro for o Giygas, alterar a flag giygasTaMorto
-      }else if(EhPosicaoBatalha(labirinto, x, y,monstrodatabase) != monstrodatabase->poderG && ness->EspeciaisRestantes > 0){
+      if(ness->poder >= IdentificaAmeaca(labirinto, x, y,monstrodatabase).poder){
+        if(IdentificaAmeaca(labirinto, x, y,monstrodatabase).identificador == monstrodatabase->Giygas.identificador){
+          ness->derrotouGiygas = 1;
+        }
+      }else if(IdentificaAmeaca(labirinto, x, y,monstrodatabase).identificador != monstrodatabase->Giygas.identificador && ness->EspeciaisRestantes > 0){
         MonstroEliminado(labirinto, x, y);
         ness->EspeciaisRestantes--;
       }
       dados->quantMovimentacao++;
-      printf("Monstro na Linha: %d Coluna: %d\n", x, y);
+      printf("Monstro %c na Linha: %d Coluna: %d\n",IdentificaAmeaca(labirinto, x, y,monstrodatabase).identificador, x, y);
 
 
     }

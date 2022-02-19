@@ -13,12 +13,13 @@ int main(int argc, char const *argv[]) {
   //Váriveis necessárias para criação do programa
   int i, j, valor, opcao, modo;
   int linhaEstudante, colunaEstudante;
-  int  linhaArq, colunaArq, quantChaveArq;
+  int  linhaArq, colunaArq;
+  int poderArq,especiaisRestantesArq;
   char valorAux, arquivo[30];
   strcpy(arquivo, "\0"); //colocamos vazio em arquivo para impedir que o usuario acesse a opcao 2 antes de digitar o nome do arquivo
   FILE *arq;
   Labirinto labirinto;
-  TipoNess itens;
+  TipoNess ness;
   TipoDados dados;
   long long int numRecurcoes;
   while(1){
@@ -43,9 +44,11 @@ int main(int argc, char const *argv[]) {
         }
 
           // lemos a primeira linha e armazenamos os valores das linhas colunas e  a quantidade de chaves que o estudante tem
-          fscanf(arq,"%d %d %d\n", &linhaArq, &colunaArq, &quantChaveArq);
+          fscanf(arq,"%d %d\n", &poderArq, &especiaisRestantesArq);
 
-          labirinto = IniciarLabirinto(linhaArq, colunaArq, &itens, quantChaveArq); // criamos uma matriz com o tamanho passado pelo arquivo
+          labirinto = IniciarLabirinto(
+              linhaArq, colunaArq, &ness, poderArq,
+              especiaisRestantesArq); // criamos uma matriz com o tamanho passado pelo arquivo
 
           while(!feof(arq) && !ferror(arq)){// enquanto não for fim do arquivo e não for erro de leitura, continuamos lendo
             valorAux = fgetc(arq); //valorAux recebe um caracter
@@ -85,10 +88,10 @@ int main(int argc, char const *argv[]) {
 
           if(MODOANALISE){
             numRecurcoes = -1; //inicializado como -1 para desconsiderar primeira chamada realizada pelo main
-            Movimenta_Estudante_Analise(labirinto, &itens, linhaEstudante, colunaEstudante, linhaArq, colunaArq, &dados,&numRecurcoes);
+            Movimenta_Estudante_Analise(labirinto, &ness, linhaEstudante, colunaEstudante, linhaArq, colunaArq, &dados,&numRecurcoes);
             printf("\n\tMODO ANALISE!\n-->O numero total de chamadas recursivas foi de: %lld\n\n",numRecurcoes);
           }else{
-            Movimenta_Estudante(labirinto, &itens, linhaEstudante,
+            Movimenta_Estudante(labirinto, &ness, linhaEstudante,
                                 colunaEstudante, linhaArq, colunaArq, &dados,
                                 NULL); //TDOO: Consertar codigo fora de alcance
           }
