@@ -90,9 +90,8 @@ int main(int argc, char const *argv[]) {
             Movimenta_Estudante_Analise(labirinto, &ness, linhaEstudante, colunaEstudante, linhaArq, colunaArq, &dados,&numRecurcoes);
             printf("\n\tMODO ANALISE!\n-->O numero total de chamadas recursivas foi de: %lld\n\n",numRecurcoes);
           }else{
-            Movimenta_Estudante(labirinto, &ness, linhaEstudante,
-                                colunaEstudante, linhaArq, colunaArq, &dados,
-                                &monstroDatabase);
+            Movimenta_Ness(labirinto, &ness, linhaEstudante, colunaEstudante,
+                           linhaArq, colunaArq, &dados, &monstroDatabase);
           }
           ImprimirLabirinto(labirinto, linhaArq, colunaArq);
           ImprimirDados(dados);

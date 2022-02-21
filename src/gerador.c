@@ -29,7 +29,7 @@ void LeArquivo(char **labirinto, FILE *arq,TipoNess *ness, TipoMonstroDatabase *
 
     for(int i = 0; i <= sizeLinhaLabirinto; i++){
       for(int j = 0; j <= sizeColunaLabirinto; j++){
-        fseek(arq,14,0);
+        fseek(arq,14+i+j,0);
         labirinto[i][j] = fgetc(arq);
       }
     }

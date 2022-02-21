@@ -40,7 +40,7 @@ void MonstroEliminado(char **labirinto, int linha, int coluna);
 short EhPosicaoBatalha(char **labirinto, int linha, int coluna);
 TipoMob IdentificaAmeaca(char **labirinto, int linha, int coluna, TipoMonstroDatabase *monstroDatabase);
 short Batalha(char ** labirinto, TipoNess * ness, TipoMob monstro);
-int Movimenta_Estudante(char **labirinto, TipoNess **ness, int x, int y,int linha, int coluna, TipoDados *dados,TipoMonstroDatabase *monstrodatabase);
+int Movimenta_Ness(char **labirinto, TipoNess **ness, int x, int y,int linha, int coluna, TipoDados *dados,TipoMonstroDatabase *monstrodatabase);
 int Movimenta_Estudante_Analise(char **labirinto, TipoNess *itens, int x, int y, int linha, int coluna, TipoDados *dados,long long int* NUM);
 void ImprimirLabirinto(char **labirinto, int linha, int coluna);
 

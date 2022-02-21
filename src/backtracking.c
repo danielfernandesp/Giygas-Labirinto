@@ -167,7 +167,7 @@ int ColunaEstudante(char **labirinto, int linha, int coluna){
 }
 
 /*Função principal do programa, onde conferimos sempre se o estudante já chegou no final do labirinto e utilizamos o backtracking*/
-int Movimenta_Estudante(char **labirinto, TipoNess **ness, int x, int y,int linha, int coluna, TipoDados *dados,TipoMonstroDatabase *monstrodatabase) {
+int Movimenta_Ness(char **labirinto, TipoNess **ness, int x, int y,int linha, int coluna, TipoDados *dados,TipoMonstroDatabase *monstrodatabase) {
     if(ChegouNoFim(*ness)){ /*O estudante chegou no final do labirinto*/
         DadosFinais(dados, y);
         MarcarPosicao(labirinto, x, y);
@@ -196,13 +196,17 @@ int Movimenta_Estudante(char **labirinto, TipoNess **ness, int x, int y,int linh
     para esquerda e para baixo. */
     if(!EhParede(labirinto, x, y) && !NessPassou(labirinto, x, y) && !EhPosicaoBatalha(labirinto, x, y)){
         MarcarPosicao(labirinto, x, y);
-        if(Movimenta_Estudante(labirinto, ness, x - 1, y, linha, coluna,dados, monstrodatabase)); // para cima
+        if(Movimenta_Ness(labirinto, ness, x - 1, y, linha, coluna, dados,
+                           monstrodatabase)); // para cima
         else{
-            if(Movimenta_Estudante(labirinto, ness, x, y + 1, linha, coluna, dados, monstrodatabase)); // para a direita
+            if(Movimenta_Ness(labirinto, ness, x, y + 1, linha, coluna, dados,
+                             monstrodatabase)); // para a direita
             else{
-                if(Movimenta_Estudante(labirinto, ness, x, y - 1, linha, coluna, dados, monstrodatabase)); // para a esquerda
+                if(Movimenta_Ness(labirinto, ness, x, y - 1, linha, coluna,
+                                 dados, monstrodatabase)); // para a esquerda
                 else{
-                    if(Movimenta_Estudante(labirinto, ness, x + 1, y, linha, coluna, dados, monstrodatabase)); //para baixo
+                    if(Movimenta_Ness(labirinto, ness, x + 1, y, linha, coluna,
+                                     dados, monstrodatabase)); //para baixo
                     else{
                         return 0;
                     }
