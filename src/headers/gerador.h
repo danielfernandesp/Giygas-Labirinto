@@ -7,7 +7,12 @@ acima. Labirintos não necessariamente possuem saída. Seu programa de geração
 arquivos de teste deverá ter alguns parâmetros de configuração, como largura e altura do
 labirinto, quantidade de portas, quantidade de chaves iniciais, e “dificuldade” do
 labirinto, entre outros, que vocês poderão colocar.*/
+typedef struct {
+  int qtdLinhas;
+  int qtdColunas;
+}TipoTamanhoArquivo;
 
-
-void LeArquivo(int **labirinto, FILE *arq,TipoNess *ness, TipoMonstroDatabase *monstroDatabase);
+short LeArquivo(char **labirinto, FILE *arq, TipoNess *ness,
+                TipoMonstroDatabase *monstroDatabase,
+                TipoTamanhoArquivo *tamanhoArquivo);
 #endif

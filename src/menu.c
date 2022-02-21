@@ -13,8 +13,7 @@ void MenuPrincipal(){
   printf("Opcoes do programa:\n");
   printf("1) Carregar novo arquivo de dados.\n");
   printf("2) Processar e exibir resposta\n");
-  printf("3) Gerar Labirintos.\n");
-  printf("4 ou qualquer outro caracter) Sair do programa.\n");
+  printf("3 ou qualquer outro caracter) Sair do programa.\n");
 
 
   printf("\n");
