@@ -7,7 +7,7 @@
 #include "headers/dados.h"
 #include "headers/gerador.h"
 
-#define MODOANALISE 1  //SETAR 1 PARA ATIVAR, 0 PARA DESATIVAR
+#define MODOANALISE 0  //SETAR 1 PARA ATIVAR, 0 PARA DESATIVAR
 
 int main(int argc, char const *argv[]) {
   //Váriveis necessárias para criação do programa
@@ -20,6 +20,7 @@ int main(int argc, char const *argv[]) {
   FILE *arq;
   Labirinto labirinto;
   TipoNess ness;
+  TipoMonstroDatabase monstroDatabase;
   TipoDados dados;
   long long int numRecurcoes;
   while(1){
@@ -43,12 +44,10 @@ int main(int argc, char const *argv[]) {
           arq = fopen(arquivo, "r");
         }
 
-          // lemos a primeira linha e armazenamos os valores das linhas colunas e  a quantidade de chaves que o estudante tem
+          // lemos a primeira linha e armazenamos os valores do poder e especiais restantes do ness
           fscanf(arq,"%d %d\n", &poderArq, &especiaisRestantesArq);
 
-          labirinto = IniciarLabirinto(
-              linhaArq, colunaArq, &ness, poderArq,
-              especiaisRestantesArq); // criamos uma matriz com o tamanho passado pelo arquivo
+          labirinto = IniciarLabirinto(linhaArq, colunaArq, &ness, poderArq,especiaisRestantesArq); // criamos uma matriz com o tamanho passado pelo arquivo
 
           while(!feof(arq) && !ferror(arq)){// enquanto não for fim do arquivo e não for erro de leitura, continuamos lendo
             valorAux = fgetc(arq); //valorAux recebe um caracter
@@ -93,7 +92,7 @@ int main(int argc, char const *argv[]) {
           }else{
             Movimenta_Estudante(labirinto, &ness, linhaEstudante,
                                 colunaEstudante, linhaArq, colunaArq, &dados,
-                                NULL); //TDOO: Consertar codigo fora de alcance
+                                &monstroDatabase);
           }
           ImprimirLabirinto(labirinto, linhaArq, colunaArq);
           ImprimirDados(dados);

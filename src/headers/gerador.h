@@ -8,8 +8,6 @@ arquivos de teste deverá ter alguns parâmetros de configuração, como largura
 labirinto, quantidade de portas, quantidade de chaves iniciais, e “dificuldade” do
 labirinto, entre outros, que vocês poderão colocar.*/
 
-void ModoFacil();
-void ModoMedio();
-void ModoDificil();
 
+void LeArquivo(int **labirinto, FILE *arq,TipoNess *ness, TipoMonstroDatabase *monstroDatabase);
 #endif

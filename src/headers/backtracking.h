@@ -24,23 +24,24 @@ typedef struct{
   TipoMob Giygas;
 }TipoMonstroDatabase;
 
-typedef int ** Labirinto;
+typedef char ** Labirinto;
 
 int **IniciarLabirinto(int linha, int coluna, TipoNess *hess, int poder,
                        int especiaisRestantes);
-void InserirPosicao(int ** labirinto, int linha, int coluna, int valor);
-int EstudantePassou(int ** labirinto, int linha, int coluna);
-int EstudanteEsta(int ** labirinto, int linha, int coluna);
-int ChegouNoFim(int **labirinto, int i, int j);
+void InserirPosicao(char **labirinto, int linha, int coluna, int valor);
+int NessPassou(char **labirinto, int linha, int coluna);
+int NessEsta(char **labirinto, int linha, int coluna);
+int ChegouNoFim(TipoNess *pNess);
 int UltrapassouLimites(int i, int j, int linha, int coluna);
-int LinhaEstudante(int ** labirinto, int linha, int coluna);
-int ColunaEstudante(int ** labirinto, int linha, int coluna);
-int EhParede(int ** labirinto, int linha, int coluna);
-void MonstroEliminado(int ** labirinto, int linha, int coluna);
-short EhPosicaoBatalha(int **labirinto, int linha, int coluna,TipoMonstroDatabase *monstroDatabase);
-TipoMob IdentificaAmeaca(int **labirinto, int linha, int coluna, TipoMonstroDatabase *monstroDatabase);
-int Movimenta_Estudante(int **labirinto, TipoNess *ness, int x, int y,int linha, int coluna, TipoDados *dados, TipoMonstroDatabase *monstrodatabase);
-int Movimenta_Estudante_Analise(int ** labirinto, TipoNess *itens, int x, int y, int linha, int coluna, TipoDados *dados,long long int* NUM);
-void ImprimirLabirinto(int ** labirinto, int linha, int coluna);
+int LinhaEstudante(char **labirinto, int linha, int coluna);
+int ColunaEstudante(char **labirinto, int linha, int coluna);
+int EhParede(char **labirinto, int linha, int coluna);
+void MonstroEliminado(char **labirinto, int linha, int coluna);
+short EhPosicaoBatalha(char **labirinto, int linha, int coluna);
+TipoMob IdentificaAmeaca(char **labirinto, int linha, int coluna, TipoMonstroDatabase *monstroDatabase);
+short Batalha(char ** labirinto, TipoNess * ness, TipoMob monstro);
+int Movimenta_Estudante(char **labirinto, TipoNess **ness, int x, int y,int linha, int coluna, TipoDados *dados,TipoMonstroDatabase *monstrodatabase);
+int Movimenta_Estudante_Analise(char **labirinto, TipoNess *itens, int x, int y, int linha, int coluna, TipoDados *dados,long long int* NUM);
+void ImprimirLabirinto(char **labirinto, int linha, int coluna);
 
 #endif

@@ -1,110 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <string.h>
+#include "headers/backtracking.h"
 
-void ModoFacil(){ // Labirintos de 5x5 até 10x10
-  srand( (unsigned)time(NULL) );
-  int linha = 0, coluna = 0, quantChave = 0, valor = 0, estudanteLinha = 0, estudanteColuna = 0;
-  char arquivo[30];
-  FILE *arq;
-  linha = 5 + rand() % 6;
-  estudanteLinha = rand() % linha; // estudante fica em uma posição aleatoria da linha
-  coluna = 5 + rand() % 6;
-  estudanteColuna = rand() % coluna; // estudante fica em uma posição aleatoria da coluna
-  quantChave = rand() % 3;
-  printf("Nome do arquivo(exemplo.txt): ");
-  scanf("%s", arquivo);
-  arq = fopen(arquivo, "w"); // w para escrita
-  if(arq == NULL){
-    printf ("Houve um erro ao abrir o arquivo.\n");
+
+void LeArquivo(char **labirinto, FILE *arq,TipoNess *ness, TipoMonstroDatabase *monstroDatabase){
+  char dadosIniciais[14];
+  int sizeLinhaLabirinto, sizeColunaLabirinto;
+  fgets(dadosIniciais,14,arq); // Le os dados do hess, dos monstros e tamanho do labirinto
+  ness->poder = atoi(&dadosIniciais[0]);
+  ness->EspeciaisRestantes = atoi(&dadosIniciais[1]);
+  monstroDatabase->LilUfO.poder = atoi(&dadosIniciais[2]);
+  monstroDatabase->LilUfO.drop = atoi(&dadosIniciais[3]);
+  monstroDatabase->TerritorialOak.poder = atoi(&dadosIniciais[4]);
+  monstroDatabase->TerritorialOak.drop = atoi(&dadosIniciais[5]);
+  monstroDatabase->StarmanJr.poder = atoi(&dadosIniciais[6]);
+  monstroDatabase->StarmanJr.drop = atoi(&dadosIniciais[7]);
+  monstroDatabase->MasterBelch.poder = atoi(&dadosIniciais[8]);
+  monstroDatabase->MasterBelch.drop = atoi(&dadosIniciais[9]);
+  monstroDatabase->Giygas.poder = atoi(&dadosIniciais[10]);
+  monstroDatabase->Giygas.drop = atoi(&dadosIniciais[11]);
+  sizeLinhaLabirinto = atoi(&dadosIniciais[12]);
+  sizeColunaLabirinto = atoi(&dadosIniciais[13]);
+  /* A partir dqui o labirinto e criado com o tamanho certo*/
+  labirinto = (char**)calloc((sizeLinhaLabirinto+1),sizeof(char*));
+  for(int i = 0; i <= sizeLinhaLabirinto; i++){
+    labirinto[i] = (char*)calloc((sizeColunaLabirinto+1),sizeof(char));
   }
-  else{
-    fprintf(arq, "%d %d %d \n", linha, coluna, quantChave);
-    for(int i = 0; i < linha; i++){
-        for(int j = 0; j < coluna; j++){
-            if( i == estudanteLinha && j == estudanteColuna){ // quando chegar na posição[i][j] correspondente ao local onde o estudante está, ele escreve o valor 0
-                valor = 0;
-            }
-            else if (i == rand() % linha && j == rand() % coluna){ // dificilmente terá portas ou paredes
-                valor = 2 + rand() % 2; // somamaos 1 pra nunca cair no local onde o estudante já está
-            }
-            else{
-                valor = 1;
-            }
-            fprintf(arq, "%d", valor);
-        }
-        fputc('\n', arq); // no final de cada linha adicionamos uma quebra de linha
+
+    for(int i = 0; i <= sizeLinhaLabirinto; i++){
+      for(int j = 0; j <= sizeColunaLabirinto; j++){
+        fseek(arq,14,0);
+        labirinto[i][j] = fgetc(arq);
+      }
     }
-    fclose(arq);
-  }
-}
-void ModoMedio(){   // Labirintos de 10x10 até 25x25
-  srand( (unsigned)time(NULL) );
-  int linha = 0, coluna = 0, quantChave = 0, valor = 0, estudanteLinha = 0, estudanteColuna = 0;
-  char arquivo[30];
-  FILE *arq;
-  linha = 10 + rand() % 16;
-  estudanteLinha = 10 + rand() % 10; // estudante fica em uma posição aleatoria da linha
-  while(estudanteLinha > linha){
-    estudanteLinha = 10 + rand() % 16; // estudante fica em uma posição aleatoria da linha
-  }
-  coluna = 10 + rand() % 16;
-  estudanteColuna = rand() % coluna; // estudante fica em uma posição aleatoria da coluna
-  quantChave = (rand() % linha + rand() % coluna) * 2;
-  printf("Nome do arquivo(exemplo.txt): ");
-  scanf("%s", arquivo);
-  arq = fopen(arquivo, "w"); // w para escrita
-  if(arq == NULL){
-    printf ("Houve um erro ao abrir o arquivo.\n");
-  }
-  else{
-    fprintf(arq, "%d %d %d \n", linha, coluna, quantChave);
-    for(int i = 0; i < linha; i++){
-        for(int j = 0; j < coluna; j++){
-          if(i == estudanteLinha && j == estudanteColuna){ // quando chegar na posição[i][j] correspondente ao local onde o estudante está, ele escreve o valor 0
-              valor = 0;
-          }
-          else{
-              valor = 1 + rand() % 3;
-          }
-            fprintf(arq, "%d", valor);
-        }
-        fputc('\n', arq); // no final de cada linha adicionamos uma quebra de linha
-    }
-    fclose(arq);
-  }
-}
-void ModoDificil(){   // Labirintos de 25x25 até 50x50
-  srand( (unsigned)time(NULL) );
-  int linha = 0, coluna = 0, quantChave = 0, valor = 0, estudanteLinha = 0, estudanteColuna = 0;
-  char arquivo[30];
-  FILE *arq;
-  linha = 25 + rand() % 26;
-  estudanteLinha = linha-1; // estudante fica na ultima posicao da linha
-  coluna = 25 + rand() % 26;
-  estudanteColuna = rand() % coluna-1; // estudante fica em uma posição aleatoria da coluna
-  quantChave = rand() % linha + rand() % coluna;
-  printf("Nome do arquivo(exemplo.txt): ");
-  scanf("%s", arquivo);
-  arq = fopen(arquivo, "w"); // w para escrita
-  if(arq == NULL){
-    printf ("Houve um erro ao abrir o arquivo.\n");
-  }
-  else{
-    fprintf(arq, "%d %d %d \n", linha, coluna, quantChave);
-    for(int i = 0; i < linha; i++){
-        for(int j = 0; j < coluna; j++){
-            if( i == estudanteLinha && j == estudanteColuna){ // quando chegar na posição[i][j] correspondente ao local onde o estudante está, ele escreve o valor 0
-                valor = 0;
-            }
-            else{
-                valor = 1 + rand() % 3;
-            }
-            fprintf(arq, "%d", valor);
-        }
-        fputc('\n', arq); // no final de cada linha adicionamos uma quebra de linha
-    }
-    fclose(arq);
-  }
+
+
 }
