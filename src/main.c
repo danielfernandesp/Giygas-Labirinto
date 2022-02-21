@@ -82,8 +82,8 @@ int main(int argc, char const *argv[]) {
           break;
         }
         else{
-          linhaEstudante = LinhaEstudante(labirinto, linhaArq, colunaArq);
-          colunaEstudante = ColunaEstudante(labirinto, linhaArq, colunaArq);
+          linhaEstudante = LinhaNess(labirinto, linhaArq, colunaArq);
+          colunaEstudante = ColunaNess(labirinto, linhaArq, colunaArq);
 
           if(MODOANALISE){
             numRecurcoes = -1; //inicializado como -1 para desconsiderar primeira chamada realizada pelo main

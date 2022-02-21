@@ -144,7 +144,7 @@ short Batalha(char ** labirinto, TipoNess * ness, TipoMob monstro){
 }
 
 /*Função para encontrar a posição da linha onde o estudante está*/
-int LinhaEstudante(char **labirinto, int linha, int coluna){
+int LinhaNess(char **labirinto, int linha, int coluna){
   for(int i = 0; i < linha; i ++){
     for(int j = 0; j < coluna; j ++){
       if(labirinto[i][j] == '@'){
@@ -155,7 +155,7 @@ int LinhaEstudante(char **labirinto, int linha, int coluna){
   return -1;
 }
 /*Função para encontrar a posição da coluna onde o estudante está*/
-int ColunaEstudante(char **labirinto, int linha, int coluna){
+int ColunaNess(char **labirinto, int linha, int coluna){
   for(int i = 0; i < linha; i ++){
     for(int j = 0; j < coluna; j ++){
       if(labirinto[i][j] == '@'){
